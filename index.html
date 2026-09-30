@@ -791,7 +791,7 @@
     </section>
 
 
-    <!-- ---------- RSVP ----------
+    <!-- ---------- RSVP ---------- -->
     <section id="rsvp" class="scene scene--flow scene--beige">
       <img class="section-bg" src="assets/images/decorations/wash-beige.svg" alt="" loading="lazy" decoding="async">
       <div class="section-overlay" aria-hidden="true"></div>
@@ -814,8 +814,8 @@
           <span class="rsvp-card__corner rsvp-card__corner--bl" aria-hidden="true"></span>
           <span class="rsvp-card__corner rsvp-card__corner--br" aria-hidden="true"></span>
 
-           Decorative star -->
-          <!-- <span class="rsvp-star" aria-hidden="true">✦</span>
+          <!-- Decorative star -->
+          <span class="rsvp-star" aria-hidden="true">✦</span>
 
           <form id="rsvpForm" class="rsvp-form" autocomplete="on" novalidate>
             <div class="rsvp-field">
@@ -872,7 +872,7 @@
           </form>
         </div>
       </div>
-    </section>  -->
+    </section>
 
 
     <!-- ---------- THANK YOU ---------- -->
@@ -985,6 +985,53 @@
     </span>
   </button>
 
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var form = document.getElementById('rsvpForm');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var btn = document.getElementById('rsvpSubmit');
+        var originalHTML = btn.innerHTML;
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+
+        var attendEl = document.querySelector('input[name="attend"]:checked');
+
+        var payload = {
+          name: document.getElementById('rsvpName').value,
+          mobile: document.getElementById('rsvpMobile').value,
+          email: document.getElementById('rsvpEmail').value,
+          side: document.getElementById('rsvpSide').value,
+          attend: attendEl ? attendEl.value : '',
+          guests: document.getElementById('rsvpGuests').value
+        };
+
+        fetch('https://script.google.com/macros/s/AKfycbybYg9ow20RtrOH3TqdBJ9y4VppXfZZbxicGW7YOaJf7bCExDmG9k2X4ILiH3AYKuB65Q/exec', {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        })
+        .then(function (res) { return res.json(); })
+        .then(function () {
+          btn.textContent = 'RSVP Sent ✓';
+          form.reset();
+          setTimeout(function () {
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+          }, 3000);
+        })
+        .catch(function () {
+          alert('Something went wrong. Please try again.');
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        });
+      });
+    });
+  </script>
 
   <script src="js/particles.js" defer></script>
   <script src="js/main.js" defer></script>
