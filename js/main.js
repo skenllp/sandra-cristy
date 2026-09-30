@@ -25,6 +25,7 @@
      --------------------------------------------------------- */
   var bgAudio = document.getElementById('bgAudio');
   var audioBtn = document.getElementById('audioBtn');
+  var quickContact = document.getElementById('quickContact');
   var audioStarted = false;
 
   function setAudioUi(playing) {
@@ -42,10 +43,19 @@
     });
   }
 
+  function showQuickContact() {
+    if (!quickContact) return;
+    quickContact.hidden = false;
+    requestAnimationFrame(function () {
+      quickContact.classList.add('is-visible');
+    });
+  }
+
   function startAmbientAudio() {
     if (!bgAudio || audioStarted) return;
     audioStarted = true;
     showAudioControl();
+    showQuickContact();
 
     bgAudio.volume = 0.72;
     var play = bgAudio.play();
@@ -302,6 +312,8 @@
     initReveals();
     initGalleryWall();
     activateLazySections();
+    showQuickContact();
+    showAudioControl();
 
     /* Background fade first; typography follows */
     setTimeout(function () {
@@ -602,33 +614,52 @@
   }
 
   /* ---------------------------------------------------------
-     8 · Countdown  ·  28 Nov 2026, 10:30 IST
+     8 · Countdowns  ·  Engagement Day & Wedding Day
      --------------------------------------------------------- */
-  (function countdown() {
-    var target = new Date('2026-11-28T10:30:00+05:30').getTime();
-    var d = document.getElementById('cdD'),
-        h = document.getElementById('cdH'),
-        m = document.getElementById('cdM'),
-        s = document.getElementById('cdS');
-    if (!d || isNaN(target)) return;
-
+  (function initCountdowns() {
     var pad = function (n) { return n < 10 ? '0' + n : String(n); };
 
-    function tick() {
-      var left = target - Date.now();
-      if (left <= 0) {
-        d.textContent = h.textContent = m.textContent = s.textContent = '00';
-        clearInterval(timer);
-        return;
+    function setupCountdown(targetIso, elIds) {
+      var target = new Date(targetIso).getTime();
+      var d = document.getElementById(elIds.d),
+          h = document.getElementById(elIds.h),
+          m = document.getElementById(elIds.m),
+          s = document.getElementById(elIds.s);
+      if (!d || !h || !m || !s || isNaN(target)) return;
+
+      var timer;
+      function tick() {
+        var left = target - Date.now();
+        if (left <= 0) {
+          d.textContent = h.textContent = m.textContent = s.textContent = '00';
+          if (timer) clearInterval(timer);
+          return;
+        }
+        var sec = Math.floor(left / 1000);
+        d.textContent = pad(Math.floor(sec / 86400));
+        h.textContent = pad(Math.floor(sec / 3600) % 24);
+        m.textContent = pad(Math.floor(sec / 60) % 60);
+        s.textContent = pad(sec % 60);
       }
-      var sec = Math.floor(left / 1000);
-      d.textContent = pad(Math.floor(sec / 86400));
-      h.textContent = pad(Math.floor(sec / 3600) % 24);
-      m.textContent = pad(Math.floor(sec / 60) % 60);
-      s.textContent = pad(sec % 60);
+      tick();
+      timer = setInterval(tick, 1000);
     }
-    tick();
-    var timer = setInterval(tick, 1000);
+
+    /* Engagement Day · Monday, 23 November 2026, 5:30 PM IST */
+    setupCountdown('2026-11-23T17:30:00+05:30', {
+      d: 'engD',
+      h: 'engH',
+      m: 'engM',
+      s: 'engS'
+    });
+
+    /* Wedding Day · Saturday, 28 November 2026, 10:30 AM IST */
+    setupCountdown('2026-11-28T10:30:00+05:30', {
+      d: 'cdD',
+      h: 'cdH',
+      m: 'cdM',
+      s: 'cdS'
+    });
   })();
 
   /* ---------------------------------------------------------
