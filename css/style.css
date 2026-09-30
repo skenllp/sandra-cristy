@@ -2345,7 +2345,7 @@ body:not(.is-revealed) #site * {
 .gallery-lede {
   max-width: 36em;
   margin-inline: auto;
-  color: var(--ink-soft);
+  color: rgba(255, 255, 255, 0.85);
   font-family: var(--f-display);
   font-style: italic;
   font-size: clamp(15px, 2.4vw, 18px);
